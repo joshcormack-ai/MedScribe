@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant SOAP Notes - AI Tool for Clinicians</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .hero {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .hero h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+    .cta-button {
+      padding: 12px 24px;
+      font-size: 1em;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .features, .demo, .pricing {
+      margin-top: 40px;
+    }
+    .features ul {
+      list-style: none;
+      padding: 0;
+    }
+    .features li::before {
+      content: "✅ ";
+    }
+    .pricing-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .pricing h3 {
+      margin-top: 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>Turn Bullet Points Into SOAP Notes Instantly</h1>
+      <p>Built for therapists, chiropractors, and clinicians who want to spend less time on paperwork and more time helping clients.</p>
+      <a class="cta-button" href="#form">Try It Free</a>
+    </div>
+
+    <div class="features">
+      <h2>Features</h2>
+      <ul>
+        <li>Instant SOAP Note Generation</li>
+        <li>Works with Bullet Points or Voice Notes</li>
+        <li>Customizable Tone + Length</li>
+        <li>Email Delivery or Copy to Clipboard</li>
+        <li>Secure + HIPAA-Conscious Mode</li>
+      </ul>
+    </div>
+
+    <div class="demo">
+      <h2>Example</h2>
+      <p><strong>Input:</strong> "Client reported anxiety, tight chest, recent breakup"</p>
+      <p><strong>Output:</strong></p>
+      <pre>
+S: Client reported symptoms of anxiety, including tightness in the chest, following a recent breakup.
+O: Client appeared visibly distressed, with shallow breathing and restlessness.
+A: Symptoms suggest acute anxiety related to recent emotional trauma.
+P: Plan to explore emotional regulation strategies and initiate CBT in the next session.
+      </pre>
+    </div>
+
+    <div class="pricing">
+      <h2>Pricing</h2>
+      <div class="pricing-card">
+        <h3>Starter</h3>
+        <p><strong>$0/month</strong></p>
+        <p>3 SOAP notes/month</p>
+      </div>
+      <div class="pricing-card">
+        <h3>Pro</h3>
+        <p><strong>$20/month</strong></p>
+        <p>Unlimited notes + Voice input</p>
+      </div>
+      <div class="pricing-card">
+        <h3>Clinic</h3>
+        <p><strong>$99/month</strong></p>
+        <p>Up to 5 users, PDF export, priority support</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <h2>Start Free Today</h2>
+      <p>No credit card required.</p>
+      <a class="cta-button" href="#form">Get Started</a>
+    </div>
+  </div>
+</body>
+</html>
