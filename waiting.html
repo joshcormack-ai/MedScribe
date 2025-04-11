@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your PDF is on the way!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 60px;
+    }
+    .loading {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    .button {
+      background-color: #3498db;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generating Your SOAP Note...</h1>
+  <div class="loading">Please wait while we create your PDF.</div>
+  <div id="link" class="hidden">
+    <a id="downloadLink" href="#" target="_blank" class="button">Download Your SOAP Note</a>
+  </div>
+
+  <script>
+    async function pollPDF() {
+      try {
+        const res = await fetch('https://your-backend.com/latest-pdf'); // <- Replace this URL!
+        const data = await res.json();
+
+        if (data && data.pdfUrl) {
+          document.getElementById("downloadLink").href = data.pdfUrl;
+          document.getElementById("link").classList.remove("hidden");
+          document.querySelector(".loading").style.display = "none";
+        } else {
+          setTimeout(pollPDF, 3000);
+        }
+      } catch (err) {
+        console.error("Error polling for PDF:", err);
+        setTimeout(pollPDF, 5000);
+      }
+    }
+
+    pollPDF();
+  </script>
+</body>
+</html>
