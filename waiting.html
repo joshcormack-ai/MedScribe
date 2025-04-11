@@ -38,7 +38,7 @@
   <script>
     async function pollForPDF() {
       try {
-        const res = await fetch("https://opensheet.elk.sh/YOUR_SHEET_ID/Sheet1");
+        const res = await fetch("https://docs.google.com/spreadsheets/d/1Qeb007QbCDJKIaA5MlniqMDk98gZ0DOo5Gyacu9VjdM/edit?gid=0#gid=0");
         const data = await res.json();
 
         if (data && data.length > 0) {
