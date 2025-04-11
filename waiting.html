@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your PDF is on the way!</title>
+  <title>Generating Your SOAP Note...</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -30,31 +29,39 @@
 </head>
 <body>
   <h1>Generating Your SOAP Note...</h1>
-  <div class="loading">Please wait while we create your PDF.</div>
+  <div class="loading">Please wait — this may take up to 10 seconds.</div>
   <div id="link" class="hidden">
-    <a id="downloadLink" href="#" target="_blank" class="button">Download Your SOAP Note</a>
+    <h2>Your SOAP Note is ready!</h2>
+    <a id="downloadLink" href="#" target="_blank" class="button">Download PDF</a>
   </div>
 
   <script>
-    async function pollPDF() {
+    async function pollForPDF() {
       try {
-        const res = await fetch('https://your-backend.com/latest-pdf'); // <- Replace this URL!
+        const res = await fetch("https://opensheet.elk.sh/YOUR_SHEET_ID/Sheet1");
         const data = await res.json();
 
-        if (data && data.pdfUrl) {
-          document.getElementById("downloadLink").href = data.pdfUrl;
-          document.getElementById("link").classList.remove("hidden");
-          document.querySelector(".loading").style.display = "none";
-        } else {
-          setTimeout(pollPDF, 3000);
+        if (data && data.length > 0) {
+          const latest = data[data.length - 1]; // get the last row
+          const pdfUrl = latest.PDF_URL;
+
+          if (pdfUrl) {
+            document.getElementById("downloadLink").href = pdfUrl;
+            document.getElementById("link").classList.remove("hidden");
+            document.querySelector(".loading").style.display = "none";
+            return;
+          }
         }
+
+        // try again in 3 seconds
+        setTimeout(pollForPDF, 3000);
       } catch (err) {
-        console.error("Error polling for PDF:", err);
-        setTimeout(pollPDF, 5000);
+        console.error("Polling error:", err);
+        setTimeout(pollForPDF, 5000);
       }
     }
 
-    pollPDF();
+    pollForPDF();
   </script>
 </body>
 </html>
