@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Generating Your SOAP Note...</title>
+  <title>Your SOAP Notes</title>
+  <script async crossorigin src="https://cdn.clerk.dev/clerk.js"></script>
+  <script>
+    window.ClerkFrontendApi = "YOUR_FRONTEND_API_KEY"; // replace with your actual key
+    window.onload = () => Clerk.load();
+  </script>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
       text-align: center;
       padding: 60px;
-      background-color: #f5f5f5;
     }
     h1 {
       font-size: 28px;
@@ -16,75 +21,88 @@
     }
     .loading {
       font-size: 18px;
-      margin-bottom: 30px;
       color: #555;
+      margin-bottom: 30px;
     }
-    .hidden {
-      display: none;
+    .spinner {
+      border: 6px solid #eee;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 20px;
+      animation: spin 1s linear infinite;
     }
-    .button {
-      background-color: #3498db;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 5px;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .note-list {
+      margin-top: 20px;
+      text-align: left;
+      display: inline-block;
+    }
+    .note {
+      background: white;
+      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .note a {
       text-decoration: none;
-      font-size: 16px;
+      color: #3498db;
     }
   </style>
 </head>
 <body>
-  <h1>Generating Your SOAP Note...</h1>
-  <div class="loading">Please wait — this may take up to 10 seconds.</div>
-  <div id="link" class="hidden">
-    <h2>Your SOAP Note is ready!</h2>
-    <a id="downloadLink" href="#" target="_blank" class="button">Download PDF</a>
-  </div>
+  <h1>Your SOAP Notes</h1>
+  <div class="spinner"></div>
+  <div class="loading">Loading your notes...</div>
+  <div id="noteResults" class="note-list"></div>
 
   <script>
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
-
-    const responseId = getQueryParam("responseId");
-    let retries = 0;
-    const maxRetries = 20; // retry every 3s up to 60 seconds
-
-    async function pollForPDF() {
-      try {
-        const res = await fetch("https://opensheet.elk.sh/1Qeb007QbCDJKIaA5MlniqMDk98gZ0DOo5Gyacu9VjdM/Sheet1");
-        const data = await res.json();
-
-        const row = data.find(entry => entry.responseId === responseId);
-        
-        if (row && row.PDF_URL) {
-          document.getElementById("downloadLink").href = row.PDF_URL;
-          document.getElementById("link").classList.remove("hidden");
-          document.querySelector(".loading").style.display = "none";
+    Clerk.load().then(() => {
+      Clerk.addListener(async ({ user }) => {
+        if (!user) {
+          document.querySelector(".loading").textContent = "Please sign in to view your notes.";
           return;
         }
-        
-        retries++;
-        if (retries < maxRetries) {
-          setTimeout(pollForPDF, 3000);
-        } else {
-          document.querySelector(".loading").textContent = "Still generating your SOAP note… please refresh this page in a few seconds.";
-        }
-        
-      } catch (err) {
-        console.error("Polling error:", err);
-        setTimeout(pollForPDF, 5000);
-      }
-    }
 
-    console.log("Captured responseId from URL:", responseId); 
-    if (responseId) {
-      pollForPDF();
-    } else {
-      document.querySelector(".loading").textContent = "Missing response ID — please resubmit the form.";
-    }
+        const userId = user.id;
+        try {
+          const res = await fetch("https://opensheet.elk.sh/1Qeb007QbCDJKIaA5MlniqMDk98gZ0DOo5Gyacu9VjdM/Sheet1");
+          const data = await res.json();
+
+          const userNotes = data.filter(entry => entry.userId === userId);
+
+          if (userNotes.length === 0) {
+            document.querySelector(".loading").textContent = "No SOAP notes found for your account yet.";
+            document.querySelector(".spinner").style.display = "none";
+            return;
+          }
+
+          document.querySelector(".spinner").style.display = "none";
+          document.querySelector(".loading").style.display = "none";
+
+          const container = document.getElementById("noteResults");
+
+          userNotes.forEach(note => {
+            const noteDiv = document.createElement("div");
+            noteDiv.className = "note";
+            noteDiv.innerHTML = `
+              <strong>Date:</strong> ${note.Timestamp || "Unknown"}<br>
+              <a href="${note.PDF_URL}" target="_blank">Download PDF</a>
+            `;
+            container.appendChild(noteDiv);
+          });
+        } catch (err) {
+          console.error("Error loading notes:", err);
+          document.querySelector(".loading").textContent = "Error loading your notes. Please try again later.";
+          document.querySelector(".spinner").style.display = "none";
+        }
+      });
+    });
   </script>
 </body>
-</html>
 </html>
