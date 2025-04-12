@@ -65,11 +65,14 @@
     }
   </style>
   <script>
-    function startSession() {
-      const sessionId = Math.random().toString(36).substring(2, 10);
-      window.location.href = `https://tally.so/r/mRrYMl?sessionId=${sessionId}`;
-    }
-  </script>
+  function startSession() {
+    const sessionId = Math.random().toString(36).substring(2, 10);
+    // 🔥 Redirect to Tally with the sessionId
+    window.location.href = `https://tally.so/r/mRrYMl?sessionId=${sessionId}`;
+  }
+</script>
+
+<button onclick="startSession()">Get Started</button>
 </head>
 <body>
   <div class="container">
