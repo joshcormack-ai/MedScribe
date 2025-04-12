@@ -1,44 +1,89 @@
-<script>
-  function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  }
-
-  const responseId = getQueryParam("responseId");
-  let retries = 0;
-  const maxRetries = 20; // retry every 3s up to 60 seconds
-
-  async function pollForPDF() {
-    try {
-      const res = await fetch("https://opensheet.elk.sh/1Qeb007QbCDJKIaA5MlniqMDk98gZ0DOo5Gyacu9VjdM/Sheet1");
-      const data = await res.json();
-
-      const row = data.find(entry => entry.responseId === responseId);
-
-      if (row && row.PDF_URL) {
-        document.getElementById("downloadLink").href = row.PDF_URL;
-        document.getElementById("link").classList.remove("hidden");
-        document.querySelector(".loading").style.display = "none";
-        return;
-      }
-
-      retries++;
-      if (retries < maxRetries) {
-        setTimeout(pollForPDF, 3000);
-      } else {
-        document.querySelector(".loading").textContent = "Still generating your SOAP note… please refresh this page in a few seconds.";
-      }
-
-    } catch (err) {
-      console.error("Polling error:", err);
-      setTimeout(pollForPDF, 5000);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generating Your SOAP Note...</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 60px;
+      background-color: #f5f5f5;
     }
-  }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .loading {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #555;
+    }
+    .hidden {
+      display: none;
+    }
+    .button {
+      background-color: #3498db;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generating Your SOAP Note...</h1>
+  <div class="loading">Please wait — this may take up to 10 seconds.</div>
+  <div id="link" class="hidden">
+    <h2>Your SOAP Note is ready!</h2>
+    <a id="downloadLink" href="#" target="_blank" class="button">Download PDF</a>
+  </div>
 
-  if (responseId) {
-    pollForPDF();
-  } else {
-    document.querySelector(".loading").textContent = "Missing response ID — please resubmit the form.";
-  }
-</script>
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const responseId = getQueryParam("responseId");
+    let retries = 0;
+    const maxRetries = 20; // retry every 3s up to 60 seconds
+
+    async function pollForPDF() {
+      try {
+        const res = await fetch("https://opensheet.elk.sh/1Qeb007QbCDJKIaA5MlniqMDk98gZ0DOo5Gyacu9VjdM/Sheet1");
+        const data = await res.json();
+
+        const row = data.find(entry => entry.responseId === responseId);
+
+        if (row && row.PDF_URL) {
+          document.getElementById("downloadLink").href = row.PDF_URL;
+          document.getElementById("link").classList.remove("hidden");
+          document.querySelector(".loading").style.display = "none";
+          return;
+        }
+
+        retries++;
+        if (retries < maxRetries) {
+          setTimeout(pollForPDF, 3000);
+        } else {
+          document.querySelector(".loading").textContent = "Still generating your SOAP note… please refresh this page in a few seconds.";
+        }
+
+      } catch (err) {
+        console.error("Polling error:", err);
+        setTimeout(pollForPDF, 5000);
+      }
+    }
+
+    if (responseId) {
+      pollForPDF();
+    } else {
+      document.querySelector(".loading").textContent = "Missing response ID — please resubmit the form.";
+    }
+  </script>
+</body>
+</html>
 </html>
