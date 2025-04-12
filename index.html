@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instant SOAP Notes - AI Tool for Clinicians</title>
+  <script async crossorigin src="https://cdn.clerk.dev/clerk.js"></script>
+  <script>
+    window.ClerkFrontendApi = "YOUR_FRONTEND_API_KEY"; // Replace this with your actual Clerk frontend API key
+    window.onload = () => Clerk.load();
+  </script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,7 +34,7 @@
       font-size: 1.2em;
       margin-bottom: 30px;
     }
-    .cta-button {
+    .cta-button, button.cta-button {
       padding: 12px 24px;
       font-size: 1em;
       background-color: #007BFF;
@@ -63,6 +68,9 @@
       text-align: center;
       padding: 40px 20px;
     }
+    #sign-in, #user-button {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -70,7 +78,9 @@
     <div class="hero">
       <h1>Turn Bullet Points Into SOAP Notes Instantly</h1>
       <p>Built for therapists, chiropractors, and clinicians who want to spend less time on paperwork and more time helping clients.</p>
-      <a class="cta-button" href="https://tally.so/r/mRrYMl">Try It Free</a>
+      <div id="sign-in"></div>
+      <div id="user-button"></div>
+      <button class="cta-button" id="start-button" disabled>Try It Free</button>
     </div>
 
     <div class="features">
@@ -118,8 +128,33 @@ P: Plan to explore emotional regulation strategies and initiate CBT in the next 
     <div class="footer">
       <h2>Start Free Today</h2>
       <p>No credit card required.</p>
-      <a class="cta-button" href="https://tally.so/r/mRrYMl">Get Started</a>
+      <button class="cta-button" id="footer-start-button" disabled>Get Started</button>
     </div>
   </div>
+
+  <script>
+    Clerk.load().then(() => {
+      Clerk.mountSignInButton("#sign-in");
+      Clerk.mountUserButton("#user-button");
+
+      Clerk.addListener(({ user }) => {
+        if (user) {
+          console.log("Logged in as:", user.id);
+          document.getElementById("start-button").disabled = false;
+          document.getElementById("footer-start-button").disabled = false;
+
+          document.getElementById("start-button").onclick = () => {
+            const userId = user.id;
+            window.location.href = `https://tally.so/r/YOUR_TALLY_FORM_ID?userId=${userId}`;
+          };
+
+          document.getElementById("footer-start-button").onclick = () => {
+            const userId = user.id;
+            window.location.href = `https://tally.so/r/YOUR_TALLY_FORM_ID?userId=${userId}`;
+          };
+        }
+      });
+    });
+  </script>
 </body>
 </html>
