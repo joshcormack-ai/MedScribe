@@ -47,17 +47,17 @@
       return urlParams.get(param);
     }
 
-    const sessionId = getQueryParam("sessionId");
+    const responseId = getQueryParam("responseId");
 
     async function pollForPDF() {
       try {
         const res = await fetch("https://opensheet.elk.sh/1Qeb007QbCDJKIaA5MlniqMDk98gZ0DOo5Gyacu9VjdM/Sheet1");
         const data = await res.json();
 
-        const matchingRow = data.find(row => row.sessionId === sessionId);
+        const row = data.find(entry => entry.responseId === responseId);
 
-        if (matchingRow && matchingRow.PDF_URL) {
-          document.getElementById("downloadLink").href = matchingRow.PDF_URL;
+        if (row && row.PDF_URL) {
+          document.getElementById("downloadLink").href = row.PDF_URL;
           document.getElementById("link").classList.remove("hidden");
           document.querySelector(".loading").style.display = "none";
           return;
@@ -70,10 +70,10 @@
       }
     }
 
-    if (sessionId) {
+    if (responseId) {
       pollForPDF();
     } else {
-      document.querySelector(".loading").textContent = "Missing session ID — please go back and try again.";
+      document.querySelector(".loading").textContent = "Missing response ID. Please resubmit the form.";
     }
   </script>
 </body>
