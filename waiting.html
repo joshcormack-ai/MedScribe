@@ -57,27 +57,28 @@
         const data = await res.json();
 
         const row = data.find(entry => entry.responseId === responseId);
-
+        
         if (row && row.PDF_URL) {
           document.getElementById("downloadLink").href = row.PDF_URL;
           document.getElementById("link").classList.remove("hidden");
           document.querySelector(".loading").style.display = "none";
           return;
         }
-
+        
         retries++;
         if (retries < maxRetries) {
           setTimeout(pollForPDF, 3000);
         } else {
           document.querySelector(".loading").textContent = "Still generating your SOAP note… please refresh this page in a few seconds.";
         }
-
+        
       } catch (err) {
         console.error("Polling error:", err);
         setTimeout(pollForPDF, 5000);
       }
     }
-
+    const responseId = getQueryParam("responseId");
+    console.log("Captured responseId from URL:", responseId); 
     if (responseId) {
       pollForPDF();
     } else {
