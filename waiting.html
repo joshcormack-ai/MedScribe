@@ -54,16 +54,16 @@
         const res = await fetch("https://opensheet.elk.sh/1Qeb007QbCDJKIaA5MlniqMDk98gZ0DOo5Gyacu9VjdM/Sheet1");
         const data = await res.json();
 
-        const row = data.find(entry => entry.responseId === responseId);
+        const matchingRow = data.find(row => row.responseId === responseId);
 
-        if (row && row.PDF_URL) {
-          document.getElementById("downloadLink").href = row.PDF_URL;
+        if (matchingRow && matchingRow.PDF_URL) {
+          document.getElementById("downloadLink").href = matchingRow.PDF_URL;
           document.getElementById("link").classList.remove("hidden");
           document.querySelector(".loading").style.display = "none";
           return;
         }
 
-        setTimeout(pollForPDF, 3000);
+        setTimeout(pollForPDF, 3000); // retry every 3 seconds
       } catch (err) {
         console.error("Polling error:", err);
         setTimeout(pollForPDF, 5000);
